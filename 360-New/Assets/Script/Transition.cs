@@ -4,30 +4,47 @@ using UnityEngine;
 
 public class Transition : MonoBehaviour
 {
-       public float maxFOV;
-       public float zoomRate;
-       public float currentFOV;
-       void Start(){
-           currentFOV = GetComponent<Camera>().fieldOfView;
-       }
+    private bool transition;
 
-            IEnumerator zoomtime(){
-            yield return new WaitForSeconds(0.05f);
-            if (currentFOV<=maxFOV)
+    public float maxFOV;
+    public float zoomRate;
+    public float currentFOV;
+
+    void Start()
+    {
+        currentFOV = GetComponent<Camera>().fieldOfView;
+    }
+
+    private void FixedUpdate()
+    {
+        if (transition)
+        {
+            if (currentFOV > maxFOV)
             {
-                currentFOV += zoomRate;
+                currentFOV -= zoomRate;
+                GetComponent<Camera>().fieldOfView = currentFOV;
+                Debug.Log("currentFOX = " + currentFOV);
             }
-            
+            else if (currentFOV == maxFOV)
+            {
+                StopCoroutine("ZoomTime");
+                transition = false;
+            }
         }
+    }
 
-       public void ZoomInTransition()
-       {
-           StartCoroutine("ZoomTime");
-       }
-           //ddd= GetComponent<Camera>();
-
+    IEnumerator ZoomTime()
+    {
+        yield return new WaitForSeconds(0.05f);
         
+    }
+
+    public void ZoomInTransition()
+    {
+        StartCoroutine("ZoomTime");
+        transition = true;
+    }
 
 
-       
+
 }
